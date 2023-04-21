@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myezen.myapp.persistance.BoardService_Mapper">
+<!-- 게시판목록 -->
+	<!-- !검색하기 --><!-- <sql> 엘리먼트는 다른 구문에서 재사용가능한 SQL구문을 정의할 때 사용된다. 로딩시점에 정적으로 파라미터처럼 사용할 수 있다. 다른 프로퍼티값은 포함된 인스턴스에서 달라질 수 있다. -->
+	<sql id="search"><!--  <sql> 태그는 다른 구문에서 재사용가능한 SQL구문을 정의할 때 사용합니다. 사용방법은 <sql>태그 id속성 추가 및 id속성 값을 부여 해준 후 태그 내에 사용할 쿼리를 작성하면 끝입니다.  -->
+		<if test="searchType != null and searchType.equals('writer')"><!-- 동적 SQL  --><!-- 1.if 2.choose (when, otherwise) 3.trim (where, set) 4.foreach가있다 -->
+			and writer like '%'|| #{keyword} ||'%'
+		</if>
+		<if test="searchType != null and searchType.equals('subject')">
+			and subject like '%'|| #{keyword} ||'%'
+		</if>
+	</sql>
+	<!-- 게시물다가져오기 -->
+	<select id="boardSelectAll" parameterType="scri" resultType="bv">
+		SELECT *FROM(
+		SELECT ROWNUM AS rnum, A.* FROM (
+		SELECT * FROM BOARD1230 WHERE delyn='N'<include refid="search"></include> ORDER BY originbidx desc, depth ASC)A
+		)B WHERE B.rnum BETWEEN (#{page}-1)*#{perPageNum}+1 AND #{page}*#{perPageNum} 
+	</select>
+	<!-- !총게시판가져오기 -->
+	<select id="boardTotal" parameterType="scri" resultType="int">
+		
+		select count(*) as cnt from board1230 where delyn='N'
+		<include refid="search"></include>
+		<!-- 프로퍼티값은 다음처럼 refid속성이나 include절 내부에서 프로퍼티값으로 사용할 수 있다. -->
+		<!-- 같은 파일 내에 정의해둔 <sql> 태그 내의 쿼리들을 불러올 수 있게 해 줍니다. 사용법은 <include> 태그를 선언하고 해당 태그에 refid속성을 추가 해준 뒤 속성 값으로 불러오고자 하는 <sql> 태그의 id속성 값을 삽입해주면 끝입니다. -->
+	</select>
+<!-- 게시판목록 !끝! -->
+
+<!-- 게시판보기 -->
+	<!-- 게시판보기 조회수 -->
+	<update id="boardViewCnt" parameterType="int">
+		update board1230 set viewcnt = NVL(viewcnt,0)+1 where bidx = #{bidx}
+	</update>
+	<!-- 게시판하나보기가져오기 -->
+	<select id="boardSelectOne" parameterType="int" resultType="bv">
+		select * from board1230 where delyn='N' and bidx= #{bidx}
+	</select>
+<!-- 게시판보기 !끝! -->
+
+<!-- 게시판쓰기 -->
+	<insert id="boardInsert" parameterType="bv">
+		insert into board1230(bidx,originbidx,depth,level_,subject,contents,writer,ip,midx,pwd,filename) values(bidx_seq.nextval,bidx_seq.nextval,0,0,#{subject},#{contents},#{writer},#{ip},#{midx},#{pwd},#{filename})
+	</insert>
+<!-- 게시판쓰기 !끝! -->
+<!-- 게시판수정 -->
+	<update id="boardModify" parameterType="bv">
+		update board1230 set subject = #{subject}, contents = #{contents}, writer = #{writer},filename = #{filename}, midx = #{midx}, ip = #{ip} where bidx = #{bidx} and pwd= #{pwd}
+	</update>
+<!-- 게시판수정 !끝! -->
+<!-- 게시판삭제 -->
+	<update id="boardDelete" parameterType="bv">
+		update board1230 set delyn='Y' where bidx=#{bidx} and pwd=#{pwd}
+	</update>
+<!-- 게시판삭제 !끝! -->
+<!-- 게시판답장 -->
+	 
+	<!-- 쿼리가 두개일때는 이름으로 안되고 번호로 해야한다 원래는 해쉬맵으로 해야한다
+	<update id="boardReplyUpdate" parameterType="int">  
+		update board1230 set depth= depth+1 where originbidx = #{0} and depth >#{1}
+	</update> -->
+	<update id="boardReplyUpdate" parameterType="HashMap"><!--  해쉬맵 -->
+		update board1230 set depth= depth+1 where originbidx = #{originbidx} and depth >#{depth}
+	</update>
+	<insert id="boardReplyInsert" parameterType="bv">
+		insert into board1230 (bidx,originbidx,depth,level_,subject,contents,writer,ip,midx,pwd,filename)
+		values(bidx_seq.nextval,#{originbidx},#{depth}+1,#{level_}+1,#{subject},#{contents},#{writer},#{ip},#{midx},#{pwd},#{filename})
+	</insert>
+<!-- 게시판답장 !끝! -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

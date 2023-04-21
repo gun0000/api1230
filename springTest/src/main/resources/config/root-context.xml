@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<!-- servelt 각자의 Bean들이 모인 공간 => root-context는 공통 ! servlet-context는 개별! web.xml에서 작성한 DispatcherServlet의 설정을 기록하는 파일  -->
+	<!-- root-context : 이 context에 등록되는 Bean들은 모든 context에서 사용되어 진다.(공유가 가능하다) 
+		servlet-context : 이 context에 등록되는 Bean들은 servlet-container에만 사용되어진다. -->
+	
+	
+	<bean id="db" class="org.springframework.jdbc.datasource.DriverManagerDataSource"><!-- db연동 !자바와오라클통신 -->
+		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property><!-- 로그파일 로그기록 -->
+		<property name="url" value="jdbc:log4jdbc:oracle:thin://@127.0.0.1:1521:XE"></property><!-- 버전 -->
+		<property name="username" value="system"></property><!-- db아이디 -->
+		<property name="password" value="1234"></property><!-- db비밀번호 -->
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="db"></property><!-- db와 연동한다 -->
+	</bean>
+	
+	<!-- https://velog.io/@shson/mybatis-sqlSession-%EC%82%AC%EC%9A%A9 -->
+	<!-- mybatis특징: https://seanb12.tistory.com/164 , https://jy-beak.tistory.com/86-->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> <!-- 쿼리 편하게 --> <!-- MyBatis에서 가장 핵심적인 객체는 SQLSession과 SQLSessionFactory이다. SQLSessionFactory는 내부적으로 SQLSession을 통해 Connection을 생성하거나 원하는 SQL을 전달하고, 결과를 리턴받는 구조로 작성하게 된다. -->
+		<property name="dataSource" ref="db"></property>
+		<property name="mapperLocations" value="classpath:mappers/*.xml"></property><!-- classpath:mappers/모든것들의.xml을 참조하겠다 !쿼리쓰는곳! -->
+		<property name="configLocation" value="classpath:config/mybatis_config.xml"></property><!-- MyBatis 환경변수 -->
+	</bean>
+	
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg><!-- 결과물을가지고와서 sqlSession만든다 -->
+	</bean>
+	<!-- 트랜잭션 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false"/>
+	
+	
+	
+	<!-- AOP -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<!-- 특정한 객체만 빈으로 등록하여 사용하고 싶다면 include-filter나 exclude-filter를 통해 설정할 수 있다. 
+		@Controller 를 제외하고 싶다면 아래와 같이 exclude-filter를 사용하여 org.springframework.stereotype.Controller를 명시해준다.
+	-->
+	<context:component-scan base-package="com.myezen.myapp">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	
+</beans>

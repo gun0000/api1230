@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myezen.myapp.persistance.MemberService_Mapper">
+
+<!-- 여기에 메소드를 만듬 -->
+	<!-- mybatis_config.xml에 있는 mv, parameterType타입지정 여기에 바로 지정해줘도된다 com.myezen.myapp.domain.MemberVo -->
+	<!-- 여기에 쿼리를쓴다 ,변수값 집어넣는것은 #{}-->
+<!-- 회원가입 -->	
+	<insert id="memberInsert" parameterType="mv"><!-- id는 구문을 찾기 위해 사용될 수 있는 네임스페이스내 유일한 구분자, parameterType은 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래스명이나 별칭 -->
+		INSERT INTO member1230(midx,memberId,memberPwd,memberName,memberPhone,memberEmail,memberGender,memberAddr,memberBirth)
+		VALUES(midx_seq.NEXTVAL,#{memberid},#{memberpwd},#{membername},#{memberphone},#{memberemail},#{membergender},#{memberaddr},#{memberbirth}) 
+	</insert>
+
+<!--회원목록리스트-->
+	<select id="memberList" resultType="mv"><!-- 각각의 값을 mv로 담는다   ArrayList<MemberVo> 구문 명과 메서드 명을 일치시키고, 반환타입을 맞춰줘야 한다. -->
+		select midx, memberId,memberName,delyn,writeday from member1230 order by midx desc
+	</select>
+	
+<!-- 아이디체크 -->
+	<select id="memberIdCheck" parameterType="String" resultType="int"><!-- parameterType 입력값  resultType 리턴값-->
+		select count(*) as cnt from member1230 where memberid=#{memberId}
+	</select>
+	
+<!-- 로그인 아이디 -->
+	<select id="memberLogin" parameterType="String" resultType="mv">
+		select * from member1230 where delyn='N' and memberid=#{memberId}
+	</select>
+
+
+
+</mapper>

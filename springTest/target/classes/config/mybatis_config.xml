@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+<configuration><!-- 밑에있는 설정을 쓰긴위해선 configuration을 부모태그로 감싸줘야한다  -->
+	<typeAliases><!-- 타입 별칭은 자바 타입에 대한 짧은 이름이다. 오직 XML 설정에서만 사용되며, 타이핑을 줄이기 위해 존재한다.-->
+ 		<typeAlias alias="mv" type="com.myezen.myapp.domain.MemberVo"/><!-- 이 설정에서 “mv”는 여러 군데에서 “com.myezen.myapp.domain.MemberVo” 대신 사용할 수 있다.마이바티스가 빈을 찾도록 패키지를 명시할 수 있다.-->
+ 		<typeAlias alias="bv" type="com.myezen.myapp.domain.BoardVo"/>
+ 		<typeAlias alias="scri" type="com.myezen.myapp.domain.SearchCriteria"/>
+ 		<typeAlias alias="cv" type="com.myezen.myapp.domain.CommentVo"/> 		
+	</typeAliases>
+</configuration>
