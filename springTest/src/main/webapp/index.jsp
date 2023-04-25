@@ -22,6 +22,9 @@
 				<a href="<%=request.getContextPath()%>/member/memberLogin.do">회원로그인</a>
 			</c:otherwise>
 		</c:choose>
+		<div>B</div>
+		<div>B</div>
+		<div>B</div>
 
 	</body>
 </html>
