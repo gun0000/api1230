@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>기본페이지입니다......</title>
+		<title>수정</title>
 	</head>
 	<body>
 		<a href="<%=request.getContextPath()%>/member/memberJoin.do">회원가입하기</a>
