@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>수정안함</title>
+		<title>수정1</title>
 	</head>
 	<body>
 		<a href="<%=request.getContextPath()%>/member/memberJoin.do">회원가입하기</a>
