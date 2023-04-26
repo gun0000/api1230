@@ -23,6 +23,7 @@
 			</c:otherwise>
 		</c:choose>
 		<div>A가수정함</div>
+		<div>A가수정함</div>
 		
 		
 		
