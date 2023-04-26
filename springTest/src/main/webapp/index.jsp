@@ -22,17 +22,6 @@
 				<a href="<%=request.getContextPath()%>/member/memberLogin.do">회원로그인</a>
 			</c:otherwise>
 		</c:choose>
-		<div>A가수정함</div>
-		<div>A가수정함</div>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		BBB
 	</body>
 </html>
